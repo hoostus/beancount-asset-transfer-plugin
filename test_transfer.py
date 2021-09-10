@@ -6,13 +6,12 @@ class TestTransfer(unittest.TestCase):
     @loader.load_doc()
     def atest_stuff(self, entries, _, options_map):
         """
+        plugin "beancount.plugins.auto"
         plugin "transfer"
-        2021-01-01 open Assets:Brokerage
-        2021-01-01 open Assets:Bank
-        2021-01-01 open Assets:New-Brokerage
 
         2021-01-01 * "Buy 1 VTI"
-            Assets:Brokerage 1 VTI {100.00 USD}
+            Assets:Brokerage 1 VTI {1.00 USD}
+            Assets:New-Brokerage 1 VWO {1.00 USD}
             Assets:Bank
 
         2021-01-01 custom "transfer" 1 VTI Assets:Brokerage Assets:New-Brokerage
