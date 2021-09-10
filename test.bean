@@ -30,4 +30,4 @@ plugin "transfer"
     Assets:Brokerage 3 VWO {3.00 USD}
     Assets:Bank
 
-2021-04-04 custom "asset_transfer" 4 VTI Assets:Brokerage Assets:New-Brokerage
+2021-04-04 custom "transfer" 4 VTI Assets:Brokerage Assets:New-Brokerage
