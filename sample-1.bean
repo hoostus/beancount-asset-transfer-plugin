@@ -1,0 +1,10 @@
+option "insert_pythonpath" "TRUE"
+plugin "beancount.plugins.auto"
+plugin "transfer"
+
+2021-01-01 * "Buy 1 VTI"
+    Assets:Brokerage 1 VTI {5.00 USD}
+    Assets:New-Brokerage 3 VWO {7.00 USD}
+    Assets:Bank
+
+2021-01-01 custom "transfer" 1 VTI Assets:Brokerage Assets:New-Brokerage
