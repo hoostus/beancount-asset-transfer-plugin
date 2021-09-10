@@ -3,11 +3,14 @@ __plugins__ = ['transfer']
 import collections
 
 from beancount.core import data
+from beancount.core import account
 from beancount.core.amount import Amount
 import beancount.core.flags
 import beancount.query.query
 
 TransferError = collections.namedtuple('TransferError', 'source message entry')
+
+CUSTOM_DIRECTIVE = 'transfer'
 
 def transfer(entries, option_map):
     errors = []
@@ -30,12 +33,25 @@ def transfer(entries, option_map):
         accounts[r.account].append(r)
 
     for entry in entries:
-        if isinstance(entry, data.Custom) and entry.type == 'asset_transfer':
+        if isinstance(entry, data.Custom) and entry.type == CUSTOM_DIRECTIVE:
             if len(entry.values) != 3:
-                errors.append(TransferError(entry.meta, "Asset transfer require 3 parameters: source_account, amount, destination_account", entry))
+                errors.append(TransferError(entry.meta, "Asset transfer requires 3 parameters: source_account, amount, destination_account", entry))
                 continue
+
             amount, source_account, destination_account = entry.values
-            assert amount.dtype == Amount, "Amount is not a beancount Amount?"
+
+            if amount.dtype != Amount:
+                errors.append(TransferError(entry.meta, "First parameter is not recognized as a valid beancount Amount.", entry))
+                continue
+
+            if source_account.dtype != account.TYPE:
+                errors.append(TransferError(entry.meta, "Source account for transfer does not appear to be an account.", entry))
+                continue
+
+            if destination_account.dtype != account.TYPE:
+                errors.append(TransferError(entry.meta, "Destination account for transfer does not appear to be an account.", entry))
+                continue
+
             # Unwrap the actual beancount classes from the namedtuples
             amount = amount.value
             found_amount = 0
