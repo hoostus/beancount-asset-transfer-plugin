@@ -1,6 +1,6 @@
 option "insert_pythonpath" "TRUE"
 
-plugin "assets.transfer"
+plugin "transfer"
 
 2021-01-01 open Assets:Brokerage
 2021-01-01 open Assets:Bank
