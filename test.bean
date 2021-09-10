@@ -1,0 +1,33 @@
+option "insert_pythonpath" "TRUE"
+
+plugin "assets.transfer"
+
+2021-01-01 open Assets:Brokerage
+2021-01-01 open Assets:Bank
+2021-01-01 open Assets:New-Brokerage
+
+2021-01-01 * "Buy 1 VTI"
+    Assets:Brokerage 1 VTI {100.00 USD}
+    Assets:Bank
+
+2021-01-15 * "Buy 1 VWO"
+    Assets:Brokerage 1 VWO {1.00 USD}
+    Assets:Bank
+
+2021-02-02 * "Buy 2 VTI"
+    Assets:Brokerage 2 VTI {200.00 USD}
+    Assets:Bank
+
+2021-02-15 * "Buy 2 VWO"
+    Assets:Brokerage 2 VWO {2.00 USD}
+    Assets:Bank
+
+2021-03-03 * "Buy 3 VTI"
+    Assets:Brokerage 3 VTI {300.00 USD}
+    Assets:Bank
+
+2021-03-15 * "Buy 3 VWO"
+    Assets:Brokerage 3 VWO {3.00 USD}
+    Assets:Bank
+
+2021-04-04 custom "asset_transfer" 4 VTI Assets:Brokerage Assets:New-Brokerage
