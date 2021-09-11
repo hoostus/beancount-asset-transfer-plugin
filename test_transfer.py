@@ -4,25 +4,26 @@ import transfer
 from beancount import loader
 import beancount.query.query
 
+def get_holdings_by_account(entries, options_map):
+    (rtypes, rrows) = beancount.query.query.run_query(entries, options_map, """
+        SELECT account,
+        units(sum(position)) as units,
+        cost_number as cost,
+        first(getprice(currency, cost_currency)) as price,
+        cost(sum(position)) as book_value,
+        value(sum(position)) as market_value,
+        cost_date as acquisition_date
+        GROUP BY account, cost_date, currency, cost_currency, cost_number
+        ORDER BY currency, cost_date
+    """)
+
+    accounts = defaultdict(list)
+    for r in rrows:
+        accounts[r.account].append(r)
+    return accounts
+
 class TestTransfer(unittest.TestCase):
-    def get_holdings_by_account(self, entries, options_map):
-        (rtypes, rrows) = beancount.query.query.run_query(entries, options_map, """
-            SELECT account,
-            units(sum(position)) as units,
-            cost_number as cost,
-            first(getprice(currency, cost_currency)) as price,
-            cost(sum(position)) as book_value,
-            value(sum(position)) as market_value,
-            cost_date as acquisition_date
-            GROUP BY account, cost_date, currency, cost_currency, cost_number
-            ORDER BY currency, cost_date
-        """)
-
-        accounts = defaultdict(list)
-        for r in rrows:
-            accounts[r.account].append(r)
-        return accounts
-
+    
     @loader.load_doc()
     def test_one(self, entries, _, options_map):
         """
@@ -37,10 +38,8 @@ class TestTransfer(unittest.TestCase):
         2021-01-01 custom "transfer" 1 VTI Assets:Brokerage Assets:New-Brokerage
         """
 
-        h = self.get_holdings_by_account(entries, options_map)
+        h = get_holdings_by_account(entries, options_map)
 
-        # I'm not sure why this fails. There is a holding but the holding has nothing in it.
-        #self.assertEquals(0, len(h['Assets:Brokerage']))
         self.assertEqual('()', str(h['Assets:Brokerage'][0].units))
 
         self.assertEqual(2, len(h['Assets:New-Brokerage']))
@@ -72,8 +71,6 @@ class TestTransfer(unittest.TestCase):
         """
 
         h = self.get_holdings_by_account(entries, options_map)
-
-        # I'm not sure why this fails. There is a holding but the holding has nothing in it.
 
     @loader.load_doc(expect_errors=True)
     def test_error_paramcount(self, entries, errors, option_map):
