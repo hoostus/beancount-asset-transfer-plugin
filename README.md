@@ -55,10 +55,10 @@ has to be same as the name of the directory you git cloned into in the first ste
 Lots from the source account are iterated in LIFO order -- your most recent lots will
 the first ones transferred.
 
-Each lot will have its own Transaction generated.
+A single Transaction will be generated for the entire transfer.
 
-Each Transaction will have a pair of Postings. One debiting the lot from the
-source account and the other crediting it to the target account.
+Each Transaction will have a pair of Postings for each lot being transferred.
+One debiting the lot from the source account and the other crediting it to the target account.
 
 The Transaction has
 * the flag 'T' (for transfer)

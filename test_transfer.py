@@ -35,7 +35,7 @@ class TestTransfer(unittest.TestCase):
             Assets:New-Brokerage 3 VWO {7.00 USD}
             Assets:Bank
 
-        2021-01-01 custom "transfer" 1 VTI Assets:Brokerage Assets:New-Brokerage
+        2021-01-05 custom "transfer" 1 VTI Assets:Brokerage Assets:New-Brokerage
         """
 
         h = get_holdings_by_account(entries, options_map)
@@ -54,8 +54,8 @@ class TestTransfer(unittest.TestCase):
         plugin "beancount.plugins.auto"
         plugin "transfer"
 
-        2021-01-01 * "Buy 1 VTI"
-            Assets:Brokerage 1 VTI {5.00 USD}
+        2021-01-01 * "Buy 5 VTI"
+            Assets:Brokerage 5 VTI {5.00 USD}
             Assets:New-Brokerage 3 VWO {55.00 USD}
             Assets:Bank
 
@@ -67,10 +67,29 @@ class TestTransfer(unittest.TestCase):
             Assets:Brokerage 3 VTI {7.00 USD}
             Assets:Bank
 
-        2021-01-01 custom "transfer" 4 VTI Assets:Brokerage Assets:New-Brokerage
+        2021-01-05 custom "transfer" 4 VTI Assets:Brokerage Assets:New-Brokerage
         """
 
-        h = self.get_holdings_by_account(entries, options_map)
+        all_accounts = get_holdings_by_account(entries, options_map)
+        brokerage = sorted(all_accounts['Assets:Brokerage'], key=lambda a: a.acquisition_date)
+        self.assertEqual('(5 VTI)', str(brokerage[0].units))
+        self.assertEqual('(1 VTI)', str(brokerage[1].units))
+        self.assertEqual('2021-01-02', str(brokerage[1].acquisition_date))
+
+        new_brokerage = sorted(all_accounts['Assets:New-Brokerage'], key=lambda a: a.acquisition_date)
+        self.assertEqual(3, len(new_brokerage))
+        # the preexisting VWO lot
+        lot1 = new_brokerage[0]
+        self.assertEqual('(3 VWO)', str(lot1.units))
+        self.assertEqual('2021-01-01', str(lot1.acquisition_date))
+
+        # transferred VTI lots
+        lot2 = new_brokerage[1]
+        self.assertEqual('(1 VTI)', str(lot2.units))
+        self.assertEqual('2021-01-02', str(lot2.acquisition_date))
+        lot3 = new_brokerage[2]
+        self.assertEqual('(3 VTI)', str(lot3.units))
+        self.assertEqual('2021-01-03', str(lot3.acquisition_date))
 
     @loader.load_doc(expect_errors=True)
     def test_error_paramcount(self, entries, errors, option_map):
@@ -83,7 +102,7 @@ class TestTransfer(unittest.TestCase):
             Assets:New-Brokerage 1 VWO {1.00 USD}
             Assets:Bank
 
-        2021-01-01 custom "transfer" Assets:Brokerage Assets:New-Brokerage
+        2021-01-05 custom "transfer" Assets:Brokerage Assets:New-Brokerage
         """
 
         self.assertEqual([transfer.TransferError], list(map(type, errors)))
@@ -100,7 +119,7 @@ class TestTransfer(unittest.TestCase):
             Assets:New-Brokerage 1 VWO {1.00 USD}
             Assets:Bank
 
-        2021-01-01 custom "transfer" 12 Assets:Brokerage Assets:New-Brokerage
+        2021-01-05 custom "transfer" 12 Assets:Brokerage Assets:New-Brokerage
         """
 
         self.assertEqual([transfer.TransferError], list(map(type, errors)))
@@ -117,7 +136,7 @@ class TestTransfer(unittest.TestCase):
             Assets:New-Brokerage 1 VWO {1.00 USD}
             Assets:Bank
 
-        2021-01-01 custom "transfer" 1 VTI 0 Assets:New-Brokerage
+        2021-01-05 custom "transfer" 1 VTI 0 Assets:New-Brokerage
         """
 
         self.assertEqual([transfer.TransferError], list(map(type, errors)))
@@ -134,7 +153,7 @@ class TestTransfer(unittest.TestCase):
             Assets:New-Brokerage 1 VWO {1.00 USD}
             Assets:Bank
 
-        2021-01-01 custom "transfer" 1 VTI Assets:Brokerage 0
+        2021-01-05 custom "transfer" 1 VTI Assets:Brokerage 0
         """
 
         self.assertEqual([transfer.TransferError], list(map(type, errors)))
@@ -151,7 +170,7 @@ class TestTransfer(unittest.TestCase):
             Assets:New-Brokerage 1 VWO {1.00 USD}
             Assets:Bank
 
-        2021-01-01 custom "transfer" 100 VTI Assets:Brokerage Assets:New-Brokerage
+        2021-01-05 custom "transfer" 100 VTI Assets:Brokerage Assets:New-Brokerage
         """
 
         self.assertEqual([transfer.TransferError], list(map(type, errors)))
