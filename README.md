@@ -57,7 +57,7 @@ the first ones transferred.
 
 A single Transaction will be generated for the entire transfer.
 
-Each Transaction will have a pair of Postings for each lot being transferred.
+The Transaction will have a pair of Postings for each lot being transferred.
 One debiting the lot from the source account and the other crediting it to the target account.
 
 The Transaction has
