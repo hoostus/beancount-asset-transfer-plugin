@@ -44,7 +44,7 @@ to run beancount plugins that are in the current directory instead of
 requiring them to be installed in some global directory.
 
 ```
-plugin "asset-transfer.transfer"
+plugin "asset_transfer.transfer"
 ```
 
 This activates the plugin. **Note: the first part of the plugin name here *asset_transfer*
