@@ -30,7 +30,7 @@ This plugin will do all the tedious work for you.
 It is easiest to just run this from a git repository directly in your beancount folder.
 
 ```
-> git clone https://github.com/hoostus/beancount-asset-transfer-plugin asset_transfer
+git clone https://github.com/hoostus/beancount-asset-transfer-plugin asset_transfer
 ```
 
 Then you need to add two lines to your beancount file:
