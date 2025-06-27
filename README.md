@@ -1,3 +1,12 @@
+| :exclamation:  This plugin doesn't work.           |
+|----------------------------------------------------|
+
+beancount's loader and plugins like this don't play well together.
+
+See [issue #1.](https://github.com/hoostus/beancount-asset-transfer-plugin/issues/1)
+
+Also see [this thread.](https://groups.google.com/g/beancount/c/vDX1oA2mJXA/m/08dg_fnIBAAJ)
+
 # Beancount Asset Transfer Plugin
 
 A plugin to automatically generate in-kind transfers between two beancount accounts,
